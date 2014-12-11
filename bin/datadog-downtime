@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+arguments=()
+for arg; do
+  case "${arg}" in
+  "--current_only" )
+    arguments=("${arguments[@]}" "-d" "current_only=true")
+    ;;
+  esac
+done
+
+{ curl -G -d "api_key=${DATADOG_API_KEY}" -d "application_key=${DATADOG_APPLICATION_KEY}" -f -s "${arguments[@]}" \
+  "https://app.datadoghq.com/api/v1/downtime"
+} | ruby -rjson -e 'puts(JSON.pretty_generate(JSON.load(ARGF.read)))'
