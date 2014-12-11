@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+
+arguments=()
+for arg; do
+  case "$1" in
+  * )
+    arguments=("${arguments[@]}" "-d" "q=$1")
+    ;;
+  esac
+done
+
+curl -G -f "https://app.datadoghq.com/api/v1/search" -d "api_key=${DATADOG_API_KEY}" -d "application_key=${DATADOG_APPLICATION_KEY}" "${arguments[@]}"
+echo
