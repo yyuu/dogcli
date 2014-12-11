@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+
+curl -G -f "https://app.datadoghq.com/api/v1/monitor" -d "api_key=${DATADOG_API_KEY}" -d "application_key=${DATADOG_APPLICATION_KEY}"
+echo
