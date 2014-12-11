@@ -5,7 +5,14 @@ arguments=()
 for arg; do
   case "${arg}" in
   "--check="* )
-    arguments=("${arguments[@]}" "${arg#--}")
+    val="${arg#--check=}"
+    case "${val}" in
+    "ok" )      val="0" ;;
+    "warn"* )   val="1" ;;
+    "crit"* )   val="2" ;;
+    "unknown" ) val="3" ;;
+    esac
+    arguments=("${arguments[@]}" "check=${val}")
   ;;
   "--host_name="* )
     arguments=("${arguments[@]}" "${arg#--}")
