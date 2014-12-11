@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
+{ curl -G -d "api_key=${DATADOG_API_KEY}" -d "application_key=${DATADOG_APPLICATION_KEY}" -f -s \
+  "https://app.datadoghq.com/api/v1/dash"
+} | ruby -rjson -e 'puts(JSON.pretty_generate(JSON.load(ARGF.read)))'
