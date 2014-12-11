@@ -3,9 +3,9 @@ set -e
 
 arguments=()
 for arg; do
-  case "$1" in
+  case "${arg}" in
   * )
-    arguments=("${arguments[@]}" "-d" "q=$1")
+    arguments=("${arguments[@]}" "-d" "q=${arg}")
     ;;
   esac
 done

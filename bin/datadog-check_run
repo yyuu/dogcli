@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -e
+
+arguments=()
+for arg; do
+  case "${arg}" in
+  "--check="* )
+    arguments=("${arguments[@]}" "${arg#--}")
+  ;;
+  "--host_name="* )
+    arguments=("${arguments[@]}" "${arg#--}")
+  ;;
+  "--status="* )
+    arguments=("${arguments[@]}" "${arg#--}")
+  ;;
+  "--timestamp="* )
+    arguments=("${arguments[@]}" "${arg#--}")
+  ;;
+  "--message="* )
+    arguments=("${arguments[@]}" "${arg#--}")
+  ;;
+  "--tags="* )
+    arguments=("${arguments[@]}" "${arg#--}")
+  ;;
+  esac
+done
+
+data="$(ruby -rjson -e 'puts(Hash[ARGV.map{|s|s.split("=",2)}].to_json)' "${arguments[@]}")"
+curl -X POST -H "Content-Type: application/json" -d "${data}" -f "https://app.datadoghq.com/api/v1/check_run?api_key=${DATADOG_API_KEY}&application_key=${DATADOG_APPLICATION_KEY}"
+echo

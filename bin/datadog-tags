@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
 set -e
 
-unset host_id
+unset arg_host_id
 
 arguments=()
 for arg; do
-  case "$1" in
+  case "${arg}" in
   "--by-source="* )
-    arguments=("${arguments[@]}" "-d" "by_source=${1#--by-source=}")
+    arguments=("${arguments[@]}" "-d" "by_source=${arg#--by-source=}")
   ;;
   "--source="* )
-    arguments=("${arguments[@]}" "-d" "source=${1#--source=}")
+    arguments=("${arguments[@]}" "-d" "source=${arg#--source=}")
   ;;
   * )
-    host_id="$1"
+    arg_host_id="${arg}"
     ;;
   esac
 done
 
-if [ -z "${host_id}" ]; then
+if [ -z "${arg_host_id}" ]; then
   curl -G -f "https://app.datadoghq.com/api/v1/tags/hosts" -d "api_key=${DATADOG_API_KEY}" -d "application_key=${DATADOG_APPLICATION_KEY}" "${arguments[@]}"
 else
-  curl -G -f "https://app.datadoghq.com/api/v1/tags/hosts/${host_id}" -d "api_key=${DATADOG_API_KEY}" -d "application_key=${DATADOG_APPLICATION_KEY}" "${arguments[@]}"
+  curl -G -f "https://app.datadoghq.com/api/v1/tags/hosts/${arg_host_id}" -d "api_key=${DATADOG_API_KEY}" -d "application_key=${DATADOG_APPLICATION_KEY}" "${arguments[@]}"
 fi
 echo
