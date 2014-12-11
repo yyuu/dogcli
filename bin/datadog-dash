@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 set -e
 
+unset arg_dash_id
+
+arguments=()
+for arg; do
+  case "${arg}" in
+  * )
+    arg_dash_id="${arg}"
+    ;;
+  esac
+done
+
 { curl -G -d "api_key=${DATADOG_API_KEY}" -d "application_key=${DATADOG_APPLICATION_KEY}" -f -s \
-  "https://app.datadoghq.com/api/v1/dash"
+  "https://app.datadoghq.com/api/v1/dash/${arg_dash_id}"
 } | ruby -rjson -e 'puts(JSON.pretty_generate(JSON.load(ARGF.read)))'
