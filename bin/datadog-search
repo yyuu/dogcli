@@ -10,5 +10,6 @@ for arg; do
   esac
 done
 
-curl -G -f "https://app.datadoghq.com/api/v1/search" -d "api_key=${DATADOG_API_KEY}" -d "application_key=${DATADOG_APPLICATION_KEY}" "${arguments[@]}"
-echo
+{ curl -G -f -d "api_key=${DATADOG_API_KEY}" -d "application_key=${DATADOG_APPLICATION_KEY}" -f -s "${arguments[@]}" \
+  "https://app.datadoghq.com/api/v1/search"
+} | ruby -rjson -e 'puts(JSON.pretty_generate(JSON.load(ARGF.read)))'

@@ -33,5 +33,6 @@ for arg; do
 done
 
 data="$(ruby -rjson -e 'puts(Hash[ARGV.map{|s|s.split("=",2)}].to_json)' "${arguments[@]}")"
-curl -X POST -H "Content-Type: application/json" -d "${data}" -f "https://app.datadoghq.com/api/v1/check_run?api_key=${DATADOG_API_KEY}&application_key=${DATADOG_APPLICATION_KEY}"
-echo
+{ curl -X POST -H "Content-Type: application/json" -d "${data}" -f -s \
+  "https://app.datadoghq.com/api/v1/check_run?api_key=${DATADOG_API_KEY}&application_key=${DATADOG_APPLICATION_KEY}" 
+} | ruby -rjson -e 'puts(JSON.pretty_generate(JSON.load(ARGF.read)))'
