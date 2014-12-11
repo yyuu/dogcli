@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -e
+
+if [[ "$1" == "--profile="* ]]; then
+  profile="$(echo "${1#--profile=}" | tr 'a-z' 'A-Z')"
+  profile_api_key="${profile}_DATADOG_API_KEY"
+  profile_application_key="${profile}_DATADOG_APPLICATION_KEY"
+  export DATADOG_API_KEY="${!profile_api_key}"
+  export DATADOG_APPLICATION_KEY="${!profile_application_key}"
+  shift 1
+fi
+
+if [ -z "${DATADOG_API_KEY}" ]; then
+  echo "datadog: DATADOG_API_KEY not set" >&2
+  exit 1
+fi
+
+if [ -z "${DATADOG_APPLICATION_KEY}" ]; then
+  echo "datadog: DATADOG_APPLICATION_KEY not set" >&2
+  exit 1
+fi
+
+command_path="$(command -v "datadog-$1" || true)"
+if [ -x "${command_path}" ]; then
+  shift 1
+  exec "${command_path}" "$@"
+else
+  echo "datadog: no such command \`$1'" >&2
+  exit 1
+fi
