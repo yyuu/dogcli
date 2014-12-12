@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -e
+
+unset arg_point
+
+arguments=()
+for arg; do
+  case "${arg}" in
+  "--metric="* )
+    arguments=("${arguments[@]}" "${arg#--}")
+  ;;
+  "--point="* )
+    arg_point="${arg#--point=}"
+  ;;
+  "--host="* )
+    arguments=("${arguments[@]}" "${arg#--}")
+  ;;
+  "--tags="* )
+    arguments=("${arguments[@]}" "${arg#--}")
+  ;;
+  "--metric_type="* )
+    arguments=("${arguments[@]}" "${arg#--}")
+  ;;
+  esac
+done
+
+data="$(P="${arg_point}" ruby -rjson -e 'puts({"series"=>[Hash[ARGV.map{|s|s.split("=",2)}+[["points",[[Time.new.to_i,ENV["P"].to_i]]]]]]}.to_json)' "${arguments[@]}")"
+{ curl -X POST -H "Content-Type: application/json" -d "${data}" -f -s \
+  "https://app.datadoghq.com/api/v1/series?api_key=${DATADOG_API_KEY}&application_key=${DATADOG_APPLICATION_KEY}"
+} | ruby -rjson -e 'puts(JSON.pretty_generate(JSON.load(ARGF.read)))'
